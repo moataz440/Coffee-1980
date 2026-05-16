@@ -1,0 +1,42 @@
+{
+  "name": "1980-coffee",
+  "version": "2.0.0",
+  "description": "1980 Coffee — Full-Stack Backend with MongoDB Atlas, Stripe, Analytics",
+  "main": "backend/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "seed": "node scripts/seed.js",
+    "analytics": "pip install -r analytics/requirements.txt && python analytics/dashboard.py",
+    "analytics:win": "pip install -r analytics/requirements.txt && python analytics\\dashboard.py"
+  },
+  "nodemonConfig": {
+    "watch": ["backend"],
+    "ext": "js,json",
+    "ignore": ["logs/*"],
+    "delay": 500
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.24.0",
+    "node-cron": "^3.0.2",
+    "stripe": "^14.5.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
