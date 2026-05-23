@@ -19,7 +19,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { logger } from './utils/logger.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DEMO = !process.env.MONGODB_URI || process.env.MONGODB_URI.trim() === '';
+let DEMO = !process.env.MONGODB_URI || process.env.MONGODB_URI.trim() === '';
 
 // DATABASE
 let mongoose;
@@ -33,14 +33,19 @@ if (!DEMO) {
     });
     logger.info('✓ MongoDB Atlas Connected');
   } catch (err) {
-    logger.error('✗ MongoDB Connection Failed:', err.message);
-    process.exit(1);
+    logger.warn('⚠️ MongoDB Connection Failed — falling back to DEMO mode:', err.message);
+    logger.warn('   Fix: whitelist Vercel IPs (0.0.0.0/0) in MongoDB Atlas Network Access.');
+    DEMO = true;
+    mongoose = null;
   }
-  mongoose.connection.on('disconnected', () => logger.warn('MongoDB disconnected'));
-  mongoose.connection.on('reconnected', () => logger.info('MongoDB reconnected'));
-} else {
+  if (mongoose) {
+    mongoose.connection.on('disconnected', () => logger.warn('MongoDB disconnected'));
+    mongoose.connection.on('reconnected', () => logger.info('MongoDB reconnected'));
+  }
+}
+
+if (DEMO) {
   logger.warn('⚡ Running in DEMO mode — in-memory database (resets on restart)');
-  logger.warn('   Set MONGODB_URI in .env to use a real database.');
 }
 
 // ROUTES (imported after DB setup so DEMO flag is set)
