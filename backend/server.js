@@ -133,21 +133,27 @@ if (!DEMO) {
   });
 }
 
-const server = app.listen(PORT, () => {
-  logger.info(`🚀 1980 Coffee running on http://localhost:${PORT}`);
-  if (DEMO) {
-    logger.info('   Demo login → admin@1980coffee.com / Admin1234');
-    logger.info(`   Open browser → http://localhost:${PORT}`);
-  }
-});
+// Export for Vercel serverless
+export default app;
 
-async function shutdown(signal) {
-  logger.info(`${signal} — shutting down...`);
-  server.close(async () => {
-    if (mongoose) await mongoose.connection.close();
-    process.exit(0);
+// Listen only when running directly (local dev / traditional host)
+if (process.env.VERCEL !== '1') {
+  const server = app.listen(PORT, () => {
+    logger.info(`🚀 1980 Coffee running on http://localhost:${PORT}`);
+    if (DEMO) {
+      logger.info('   Demo login → admin@1980coffee.com / Admin1234');
+      logger.info(`   Open browser → http://localhost:${PORT}`);
+    }
   });
-  setTimeout(() => process.exit(1), 10_000);
+
+  async function shutdown(signal) {
+    logger.info(`${signal} — shutting down...`);
+    server.close(async () => {
+      if (mongoose) await mongoose.connection.close();
+      process.exit(0);
+    });
+    setTimeout(() => process.exit(1), 10_000);
+  }
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT',  () => shutdown('SIGINT'));
 }
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT',  () => shutdown('SIGINT'));
