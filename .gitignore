@@ -3,6 +3,10 @@ node_modules/
 logs/
 *.log
 .DS_Store
+Thumbs.db
 __pycache__/
 *.pyc
 .env.local
+.claude/
+.dist/
+.sixth/
